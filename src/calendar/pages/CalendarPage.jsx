@@ -3,7 +3,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Calendar } from 'react-big-calendar'
 import { addHours } from 'date-fns'
 import { localizer, getMessagesES } from '../../helpers'
-import { CalendarEvent, Navbar } from '..'
+import { CalendarEvent, Navbar, CalendarModal } from '..'
 
 const events = [{
   title: 'Cumpleaños del jefe',
@@ -64,6 +64,8 @@ export const CalendarPage = () => {
         onSelectEvent={onSelect}
         onView={onViewChanged}
       />
+
+      <CalendarModal />
     </>
   )
 }
