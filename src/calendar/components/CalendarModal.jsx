@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { addHours, differenceInSeconds } from 'date-fns'
 import DatePicker, { registerLocale } from "react-datepicker"
 import es from 'date-fns/locale/es'
@@ -6,7 +6,7 @@ import Modal from 'react-modal'
 import 'react-datepicker/dist/react-datepicker.css'
 import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
-import { useUiStore } from '../../hooks'
+import { useCalendarStore, useUiStore } from '../../hooks'
 
 registerLocale('es', es)
 
@@ -25,12 +25,13 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 export const CalendarModal = () => {
+  const { activeEvent, startSavingEvent } = useCalendarStore()
   const { isDateModalOpen, closeDateModal } = useUiStore()
   const [formSubmitted, setFormSubmitted] = useState(false)
 
   const [formValues, setFormValues] = useState({
-    title: 'Luis',
-    notes: 'Farfan',
+    title: '',
+    notes: '',
     start: new Date(),
     end: addHours(new Date(), 2)
   })
@@ -42,6 +43,13 @@ export const CalendarModal = () => {
       ? ''
       : 'is-invalid'
   }, [formValues.title, formSubmitted])
+
+  useEffect(() => {
+    if (activeEvent) {
+      // Spread del objeto para que no haya problemas con la referencia
+      setFormValues({ ...activeEvent })
+    }
+  }, [activeEvent])
 
   const handleChange = ({ target }) => {
     setFormValues({
@@ -61,7 +69,7 @@ export const CalendarModal = () => {
     closeDateModal()
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     setFormSubmitted(true)
 
@@ -76,6 +84,10 @@ export const CalendarModal = () => {
       Swal.fire('Titulo inválido', 'Debe ingresar el título del evento', 'error')
       return
     }
+
+    await startSavingEvent(formValues)
+    setFormSubmitted(false)
+    closeDateModal()
   }
 
   return (
