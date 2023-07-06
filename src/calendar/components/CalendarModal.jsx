@@ -80,10 +80,10 @@ export const CalendarModal = () => {
       return
     }
 
-    if (formValues.title.length <= 0) {
-      Swal.fire('Titulo inválido', 'Debe ingresar el título del evento', 'error')
-      return
-    }
+    // if (formValues.title.length <= 0) {
+    //   Swal.fire('Titulo inválido', 'Debe ingresar el título del evento', 'error')
+    //   return
+    // }
 
     await startSavingEvent(formValues)
     setFormSubmitted(false)
